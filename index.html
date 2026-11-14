@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Pen Fight | Classroom Desk Arena</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#bd8247">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <div id="unity-fullscreen-container">
+        <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+        <div id="unity-loading-container">
+          <div id="unity-loading-card" role="status" aria-live="polite">
+            <div class="loading-kicker">CLASSROOM DESK ARENA</div>
+            <div class="loading-title"><span>PEN</span> <span>FIGHT</span></div>
+            <div class="loading-subtitle">Setting up the desk…</div>
+            <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+          </div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-build-title">Pen Fight</div>
+        <button id="unity-fullscreen-button" type="button" aria-label="Enter full screen">
+          <span class="fullscreen-icon" aria-hidden="true"></span>
+          <span id="fullscreen-label">Full screen</span>
+        </button>
+      </div>
+      <div id="fullscreen-help" role="status" aria-live="polite" hidden>
+        <div class="fullscreen-help-title">Full screen isn’t available here</div>
+        <div id="fullscreen-help-copy">Open the game in a browser tab that allows full screen.</div>
+        <button id="fullscreen-help-dismiss" type="button">Got it</button>
+      </div>
+    </div>
+    <script>
+      let canvas = document.querySelector("#unity-canvas");
+      let fullscreenContainer = document.querySelector("#unity-fullscreen-container");
+
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Pen-Fight-Play.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Pen-Fight-Play.data.unityweb",
+        frameworkUrl: buildUrl + "/Pen-Fight-Play.framework.js.unityweb",
+        codeUrl: buildUrl + "/Pen-Fight-Play.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+
+        // If you have a custom web site structure, or want to place multiple Unity build instances on the same page,
+        // you can pass fullscreenElementID: "my-unity-fullscreen-container-id", in this configuration field to
+        // explicitly point to the element tree root that is displayed in fullscreen mode.
+        fullscreenElementID: "unity-container",
+
+        companyName: "Gadza",
+        productName: "Pen Fight",
+        productVersion: "0.1.1",
+        showBanner: unityShowBanner,
+        // errorHandler: function(err, url, line) {
+        //    alert("error " + err + " occurred at line " + line);
+        //    // Return 'true' if you handled this error and don't want Unity
+        //    // to process it further, 'false' otherwise.
+        //    return true;
+        // },
+      };
+
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      // If you would like all file writes inside Unity Application.persistentDataPath
+      // directory to automatically persist so that the contents are remembered when
+      // the user revisits the site the next time, uncomment the following line:
+      // config.autoSyncPersistentDataPath = true;
+      // This autosyncing is currently not the default behavior to avoid regressing
+      // existing user projects that might rely on the earlier manual
+      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
+      // expected to change.
+
+      const hasCoarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      const isTouchMac = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+      const isIOSDevice = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isTouchMac;
+      const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent) ||
+        isTouchMac || (hasCoarsePointer && Math.min(window.screen.width, window.screen.height) <= 1200);
+
+      if (isMobileDevice) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
+        config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+
+
+      } else {
+        // Desktop style: Render the game canvas container in a window that can be maximized to fullscreen:
+        config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      }
+
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        const loadingContainer = document.querySelector("#unity-loading-container");
+        const progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+        createUnityInstance(canvas, config, (progress) => {
+          if (progress < 1) {
+            loadingContainer.style.display = "flex";
+            progressBarFull.style.width = 100 * progress + "%";
+          } else {
+            loadingContainer.style.display = "none";
+          }
+        }).then((unityInstance) => {
+                const fullscreenButton = document.querySelector("#unity-fullscreen-button");
+                const fullscreenLabel = document.querySelector("#fullscreen-label");
+                const fullscreenHelp = document.querySelector("#fullscreen-help");
+                const fullscreenHelpCopy = document.querySelector("#fullscreen-help-copy");
+                const isFullscreen = () => document.fullscreenElement === document.querySelector("#unity-container") ||
+                  document.webkitFullscreenElement === document.querySelector("#unity-container");
+                const canRequestFullscreen = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+                const updateFullscreenButton = () => {
+                  const active = isFullscreen();
+                  fullscreenLabel.textContent = active ? "Exit full screen" : "Full screen";
+                  fullscreenButton.setAttribute("aria-label", active ? "Exit full screen" : "Enter full screen");
+                  fullscreenButton.classList.toggle("is-fullscreen", active);
+                };
+
+                fullscreenButton.onclick = () => {
+                  if (!canRequestFullscreen()) {
+                    fullscreenHelpCopy.textContent = isIOSDevice
+                      ? "On iPhone, open this page in Safari, use Share, choose Add to Home Screen, turn on Open as Web App, then launch Pen Fight from the Home Screen."
+                      : "This browser or embedded page does not allow full screen. Open Pen Fight in a new browser tab and try again.";
+                    fullscreenHelp.hidden = false;
+                    return;
+                  }
+
+                  const enteringFullscreen = !isFullscreen();
+                  unityInstance.SetFullscreen(enteringFullscreen ? 1 : 0);
+                  window.setTimeout(() => {
+                    updateFullscreenButton();
+                    if (enteringFullscreen && !isFullscreen()) {
+                      fullscreenHelpCopy.textContent = "This browser or embedded page does not allow full screen. Open Pen Fight in a new browser tab and try again.";
+                      fullscreenHelp.hidden = false;
+                    }
+                  }, 700);
+                };
+                document.addEventListener("fullscreenchange", updateFullscreenButton);
+                document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+                document.querySelector("#fullscreen-help-dismiss").onclick = () => { fullscreenHelp.hidden = true; };
+                updateFullscreenButton();
+
+                const isPhoneOrTablet = isMobileDevice;
+                unityInstance.SendMessage("GameManager", "ApplyWebDeviceQuality", isPhoneOrTablet ? "Mobile" : "PC");
+
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+
+      document.body.appendChild(script);
+
+    </script>
+  </body>
+</html>

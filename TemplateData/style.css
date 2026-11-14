@@ -1,0 +1,256 @@
+:root {
+  color-scheme: light;
+  --desk: #bd8247;
+  --cream: #fff4dc;
+  --ink: #493522;
+  --blue: #258bd0;
+  --blue-dark: #176da9;
+  --orange: #ee8240;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--desk);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+body { height: 100vh; height: 100dvh; }
+
+#unity-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--desk);
+}
+#unity-fullscreen-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #231F20;
+}
+#unity-canvas {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #231F20;
+  touch-action: none;
+  outline: none;
+}
+
+#unity-loading-container {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(120, 73, 34, .35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 5;
+}
+#unity-loading-card {
+  width: min(88vw, 360px);
+  padding: 28px 30px 26px;
+  border: 3px solid #f6d9a4;
+  border-radius: 26px;
+  background: var(--cream);
+  box-shadow: 0 8px 0 rgba(105, 62, 29, .22), 0 18px 48px rgba(52, 33, 18, .18);
+  text-align: center;
+}
+.loading-kicker {
+  margin-bottom: 7px;
+  color: #936e4a;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.loading-title {
+  color: var(--blue);
+  font-size: clamp(32px, 9vw, 46px);
+  font-weight: 950;
+  letter-spacing: .015em;
+  line-height: 1.05;
+  text-shadow: 0 3px 0 rgba(30, 95, 142, .2);
+}
+.loading-title span:last-child { color: var(--orange); }
+.loading-subtitle { margin: 10px 0 18px; color: #88694a; font-size: 14px; }
+#unity-progress-bar-empty {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border: 1px solid #e2c79d;
+  border-radius: 999px;
+  background: #f0dfc1;
+}
+#unity-progress-bar-full {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #258bd0, #42b7e6);
+  transition: width .15s ease-out;
+}
+
+#unity-footer {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 24px);
+  padding: 7px 8px 7px 16px;
+  border: 1px solid rgba(255, 244, 220, .68);
+  border-radius: 999px;
+  background: rgba(255, 244, 220, .94);
+  box-shadow: 0 3px 0 rgba(108, 65, 29, .2), 0 8px 22px rgba(52, 33, 18, .15);
+}
+#unity-build-title {
+  overflow: hidden;
+  color: #806345;
+  font-size: 12px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#unity-fullscreen-button {
+  display: inline-flex;
+  min-width: 142px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 16px;
+  border: 1px solid #51a7df;
+  border-radius: 999px;
+  background: var(--blue);
+  box-shadow: 0 3px 0 var(--blue-dark);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+#unity-fullscreen-button:hover { background: #3299dc; }
+#unity-fullscreen-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue-dark); }
+#unity-fullscreen-button:focus-visible, #fullscreen-help-dismiss:focus-visible {
+  outline: 3px solid #f5c044;
+  outline-offset: 3px;
+}
+.fullscreen-icon {
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  opacity: .95;
+}
+.is-fullscreen .fullscreen-icon { border-radius: 50%; width: 13px; height: 13px; }
+
+#fullscreen-help {
+  position: fixed;
+  z-index: 30;
+  top: max(16px, env(safe-area-inset-top));
+  left: 50%;
+  width: min(440px, calc(100vw - 28px));
+  padding: 18px 18px 14px;
+  transform: translateX(-50%);
+  border: 2px solid #f1d29a;
+  border-radius: 18px;
+  background: var(--cream);
+  box-shadow: 0 5px 0 rgba(108, 65, 29, .2), 0 14px 36px rgba(52, 33, 18, .22);
+  text-align: center;
+}
+#fullscreen-help[hidden] { display: none; }
+.fullscreen-help-title { margin-bottom: 7px; font-weight: 850; }
+#fullscreen-help-copy { color: #745b42; font-size: 13px; line-height: 1.45; }
+#fullscreen-help-dismiss {
+  min-height: 40px;
+  margin-top: 13px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#unity-warning {
+  position: fixed;
+  z-index: 40;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  display: none;
+  max-width: calc(100vw - 24px);
+  padding: 10px 16px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: #fff4dc;
+  color: #493522;
+  box-shadow: 0 4px 16px rgba(52, 33, 18, .2);
+}
+#diagnostics-icon { width: 28px; height: 28px; cursor: pointer; }
+
+#unity-container:fullscreen,
+#unity-container:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #bd8247;
+}
+#unity-container:fullscreen #unity-fullscreen-container,
+#unity-container:-webkit-full-screen #unity-fullscreen-container {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.unity-mobile #unity-footer {
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  bottom: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.unity-mobile #unity-build-title { display: none; }
+.unity-mobile #unity-fullscreen-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 13px;
+  background: rgba(37, 139, 208, .96);
+}
+.unity-mobile #unity-fullscreen-button #fullscreen-label { display: none; }
+.unity-mobile #unity-fullscreen-button.is-fullscreen { min-width: 108px; }
+.unity-mobile #unity-fullscreen-button.is-fullscreen #fullscreen-label { display: inline; }
+.unity-mobile #diagnostics-icon { position: fixed; right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); z-index: 21; }
+
+@media (max-height: 420px) and (orientation: landscape) {
+  .unity-mobile #unity-fullscreen-button { min-width: 40px; min-height: 40px; }
+  #unity-loading-card { padding: 18px 24px; }
+  .loading-title { font-size: 34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
